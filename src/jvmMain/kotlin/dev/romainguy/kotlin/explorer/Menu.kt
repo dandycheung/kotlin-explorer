@@ -25,27 +25,42 @@ import androidx.compose.ui.window.MenuScope
 import kotlin.reflect.KMutableProperty0
 
 /** Convenience class handles `Ctrl <-> Meta` modifies */
-sealed class Shortcut(private val key: Key, private val isShift: Boolean, private val isCtrl: Boolean) {
+sealed class Shortcut(
+    private val key: Key,
+    private val isShift: Boolean,
+    private val isCtrl: Boolean,
+    private val isAlt: Boolean = false,
+    private val metaOnMac: Boolean = true
+) {
     class Ctrl(key: Key) : Shortcut(key, isCtrl = true, isShift = false)
+    class CtrlAlt(key: Key) : Shortcut(key, isCtrl = true, isShift = false, isAlt = true)
+    class CtrlOnly(key: Key) : Shortcut(key, isCtrl = true, isShift = false, metaOnMac = false)
     class CtrlShift(key: Key) : Shortcut(key, isCtrl = true, isShift = true)
 
-    fun asKeyShortcut() = KeyShortcut(key = key, ctrl = isCtrl && !isMac, shift = isShift, meta = isCtrl && isMac)
+    fun asKeyShortcut() =
+        KeyShortcut(
+            key = key,
+            ctrl = isCtrl && (!isMac || !metaOnMac),
+            shift = isShift,
+            meta = isCtrl && isMac && metaOnMac,
+            alt = isAlt
+        )
 }
 
 @Composable
 fun MenuScope.MenuCheckboxItem(
     text: String,
-    shortcut: Shortcut,
+    shortcut: Shortcut?,
     property: KMutableProperty0<Boolean>,
     onCheckedChanged: (Boolean) -> Unit = {}
 ) {
-    CheckboxItem(text, property.get(), shortcut = shortcut.asKeyShortcut(), onCheckedChange = {
+    CheckboxItem(text, property.get(), shortcut = shortcut?.asKeyShortcut(), onCheckedChange = {
         property.set(it)
         onCheckedChanged(it)
     })
 }
 
 @Composable
-fun MenuScope.MenuItem(text: String, shortcut: Shortcut, onClick: () -> Unit) {
-    Item(text, shortcut = shortcut.asKeyShortcut(), onClick = onClick)
+fun MenuScope.MenuItem(text: String, shortcut: Shortcut, onClick: () -> Unit, enabled: Boolean = true) {
+    Item(text, enabled = enabled, shortcut = shortcut.asKeyShortcut(), onClick = onClick)
 }

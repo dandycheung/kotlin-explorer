@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package dev.romainguy.kotlin.explorer.jump
+package dev.romainguy.kotlin.explorer
 
-class CompoundJumpDetector(private vararg val detectors: JumpDetector) : JumpDetector {
-    override fun detectJump(line: String) = detectors.firstNotNullOfOrNull { it.detectJump(line) }
+private const val Debug = 1
+private const val Warning = 2
 
-    override fun detectAddressed(line: String) = detectors.firstNotNullOfOrNull { it.detectAddressed(line) }
+object Logger {
+    private val level = System.getenv("KOTLIN_EXPLORER_LOG")?.toIntOrNull() ?: 0
+
+    fun debug(message: String) {
+        if (level >= Debug) {
+            println("Debug:  $message")
+        }
+    }
+
+    fun warn(message: String) {
+        if (level >= Warning) {
+            println("Warning: $message")
+        }
+    }
 }

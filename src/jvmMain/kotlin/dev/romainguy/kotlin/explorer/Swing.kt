@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package dev.romainguy.kotlin.explorer.jump
+@file:Suppress("FunctionName")
 
-interface JumpDetector {
-    fun detectJump(line: String): Jump?
+package dev.romainguy.kotlin.explorer
 
-    fun detectAddressed(line: String): Int?
+import java.awt.Point
+import javax.swing.JTextArea
+import javax.swing.JViewport
+
+fun JTextArea.centerCaretInView() {
+    val viewport = parent as? JViewport ?: return
+    val linePos = modelToView2D(caretPosition).bounds.centerY.toInt()
+    viewport.viewPosition = Point(0, maxOf(0, linePos - viewport.height / 2))
 }

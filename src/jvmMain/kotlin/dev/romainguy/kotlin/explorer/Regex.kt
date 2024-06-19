@@ -16,6 +16,8 @@
 
 package dev.romainguy.kotlin.explorer
 
+const val HexDigit = "[0-9a-fA-F]"
+
 fun MatchResult.getValue(group: String): String {
     return groups[group]?.value ?: throw IllegalStateException("Value of $group not found in $value")
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Romain Guy
+ * Copyright (C) 2024 Romain Guy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package dev.romainguy.kotlin.explorer.jump
+package dev.romainguy.kotlin.explorer.code
 
-import dev.romainguy.kotlin.explorer.getValue
+import java.io.ByteArrayOutputStream
+import java.io.PrintStream
 
-class RegexJumpDetector(private val jumpRegex: Regex, private val addressedRegex: Regex) : JumpDetector {
-    override fun detectJump(line: String): Jump? {
-        val match = jumpRegex.matchEntire(line) ?: return null
-        return Jump(match.getValue("address").toInt(16), if (match.getValue("direction") == "+") 1 else -1)
+sealed class CodeContent {
+    data class Success(val classes: List<Class>) : CodeContent()
+    data class Error(val errorText: String) : CodeContent() {
+        constructor(e: Exception) : this(e.toFullString())
     }
+    data object Empty : CodeContent()
+}
 
-    override fun detectAddressed(line: String) = addressedRegex.matchEntire(line)?.getValue("address")?.toInt(16)
+private fun Throwable.toFullString(): String {
+    return ByteArrayOutputStream().use {
+        printStackTrace(PrintStream(it))
+        it.toString()
+    }
 }

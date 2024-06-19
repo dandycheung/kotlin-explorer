@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Romain Guy
+ * Copyright (C) 2024 Romain Guy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-package dev.romainguy.kotlin.explorer.jump
+package dev.romainguy.kotlin.explorer.code
 
-class Jump(val address: Int, val direction: Int)
+data class CodeStyle(
+    val indent: Int = 4,
+    val showLineNumbers: Boolean = true,
+    val lineNumberWidth: Int = 4,
+)
