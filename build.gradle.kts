@@ -18,7 +18,7 @@ repositories {
     maven("https://packages.jetbrains.team/maven/p/kpm/public/")
 }
 
-version = "1.6.1"
+version = "1.6.3"
 val baseName = "Kotlin Explorer"
 
 kotlin {
@@ -68,6 +68,11 @@ kotlin {
             }
         }
     }
+}
+
+composeCompiler {
+    stabilityConfigurationFile = layout.projectDirectory.file("compose-stability.config")
+    reportsDestination = layout.buildDirectory.dir("compose-compiler")
 }
 
 compose.desktop {
